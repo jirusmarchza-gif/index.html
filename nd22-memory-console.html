@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ND22 · ห้องความทรงจำ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --joy:#FFD447;
+    --joy-deep:#FFB800;
+    --sad:#4C8DF6;
+    --sad-deep:#2F5FD9;
+    --fear:#B98CE8;
+    --anger:#FF6B4A;
+    --disgust:#5FD98A;
+    --ink:#232042;
+    --bg-deep:#171335;
+    --bg-mid:#232055;
+    --bg-top:#33297a;
+    --card:#ffffff;
+    --card-soft:#f4f1ff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Nunito',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,212,71,0.18), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(95,217,138,0.15), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(76,141,246,0.25), transparent 55%),
+      linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-top) 100%);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* Floating memory orbs ambience */
+  .orb-field{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(0.5px);
+    opacity:0.55;
+    animation:drift linear infinite;
+    box-shadow:0 0 24px currentColor;
+  }
+  @keyframes drift{
+    0%{transform:translateY(0) translateX(0) scale(1);}
+    50%{transform:translateY(-40px) translateX(18px) scale(1.05);}
+    100%{transform:translateY(0) translateX(0) scale(1);}
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(110vh) scale(0.8); opacity:0;}
+    8%{opacity:0.6;}
+    92%{opacity:0.5;}
+    100%{transform:translateY(-10vh) scale(1.1); opacity:0;}
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    max-width:640px;
+    margin:0 auto;
+    padding:48px 20px 80px;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#f1efff;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.06em;
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--joy);}
+
+  h1{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:clamp(30px, 7vw, 42px);
+    line-height:1.15;
+    color:#fff;
+    margin:0 0 10px;
+    text-shadow:0 4px 24px rgba(0,0,0,0.25);
+  }
+  h1 span{
+    background:linear-gradient(90deg, var(--joy), var(--disgust) 40%, var(--sad) 75%, var(--fear));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .lede{
+    color:#d7d3ff;
+    font-size:16px;
+    line-height:1.65;
+    max-width:52ch;
+    margin:0 0 32px;
+  }
+
+  .console{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter:blur(14px);
+    border-radius:26px;
+    padding:22px;
+    box-shadow:0 20px 60px rgba(10,6,40,0.4);
+  }
+
+  .console-label{
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:#c9c4ff;
+    text-transform:uppercase;
+    margin:0 0 10px 4px;
+  }
+
+  form{
+    display:flex;
+    gap:10px;
+  }
+  input[type=text]{
+    flex:1;
+    min-width:0;
+    font-family:'Nunito',sans-serif;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:0.03em;
+    padding:16px 18px;
+    border-radius:16px;
+    border:2px solid transparent;
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .2s, transform .2s;
+  }
+  input[type=text]::placeholder{
+    color:#a9a4c8;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  input[type=text]:focus{
+    border-color:var(--joy-deep);
+    transform:translateY(-1px);
+  }
+  input[type=text].shake{
+    animation:shake .4s;
+    border-color:var(--anger);
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+
+  button{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:17px;
+    color:#2a1d00;
+    background:linear-gradient(180deg, var(--joy), var(--joy-deep));
+    border:none;
+    border-radius:16px;
+    padding:0 24px;
+    cursor:pointer;
+    box-shadow:0 8px 0 #d99b00, 0 12px 20px rgba(217,155,0,0.25);
+    transition:transform .12s, box-shadow .12s;
+    white-space:nowrap;
+  }
+  button:hover{transform:translateY(-2px);}
+  button:active{
+    transform:translateY(3px);
+    box-shadow:0 4px 0 #d99b00, 0 6px 14px rgba(217,155,0,0.25);
+  }
+  button:focus-visible, input:focus-visible{
+    outline:3px solid #fff;
+    outline-offset:2px;
+  }
+
+  .hint-note{
+    font-size:13px;
+    color:#b6b1e6;
+    margin:12px 4px 0;
+  }
+
+  /* Result area */
+  #result{
+    margin-top:26px;
+  }
+
+  .result-card{
+    background:var(--card);
+    border-radius:24px;
+    padding:26px 24px;
+    box-shadow:0 24px 50px rgba(8,4,30,0.35);
+    animation:pop .45s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes pop{
+    0%{opacity:0; transform:translateY(14px) scale(.97);}
+    100%{opacity:1; transform:translateY(0) scale(1);}
+  }
+
+  .greet{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .greet-orb{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #fff, var(--joy) 55%, var(--joy-deep));
+    box-shadow:0 6px 16px rgba(255,180,0,0.4);
+    flex-shrink:0;
+  }
+  .greet h2{
+    font-family:'Baloo 2',sans-serif;
+    font-size:21px;
+    margin:0;
+    color:var(--ink);
+  }
+  .greet p{
+    margin:2px 0 0;
+    font-size:14px;
+    color:#77728f;
+    font-weight:600;
+  }
+
+  .hint-grid{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .hint-card{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:16px 16px;
+    border-radius:16px;
+    background:var(--card-soft);
+    border-left:6px solid var(--joy-deep);
+  }
+  .hint-card .num{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:14px;
+    color:#fff;
+    background:var(--joy-deep);
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  .hint-card p{
+    margin:0;
+    font-size:16px;
+    font-weight:700;
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .hint-card:nth-child(4n+2){border-left-color:var(--sad-deep);}
+  .hint-card:nth-child(4n+2) .num{background:var(--sad-deep);}
+  .hint-card:nth-child(4n+3){border-left-color:var(--fear);}
+  .hint-card:nth-child(4n+3) .num{background:var(--fear);}
+  .hint-card:nth-child(4n){border-left-color:var(--disgust);}
+  .hint-card:nth-child(4n) .num{background:#3aa864;}
+
+  .empty-note{
+    background:var(--card-soft);
+    border-radius:16px;
+    padding:18px;
+    font-size:15px;
+    font-weight:700;
+    color:#5c5680;
+    text-align:center;
+  }
+
+  .not-found{
+    background:rgba(255,107,74,0.12);
+    border:1px solid rgba(255,107,74,0.4);
+    border-radius:22px;
+    padding:22px;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    animation:pop .4s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .not-found .icon{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:var(--anger);
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:22px;
+    color:#fff;
+  }
+  .not-found strong{
+    display:block;
+    color:#fff;
+    font-size:16px;
+    font-family:'Baloo 2',sans-serif;
+  }
+  .not-found span{
+    color:#e9d8d2;
+    font-size:14px;
+    font-weight:600;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:44px;
+    color:#8983b8;
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+
+  @media (max-width:420px){
+    form{flex-direction:column;}
+    button{padding:14px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .orb, .result-card, .not-found{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="orb-field" id="orbField" aria-hidden="true"></div>
+
+<div class="wrap">
+  <div class="badge"><span class="dot"></span>คณะสหเวชศาสตร์ · โภชนาการและการกำหนดอาหาร</div>
+  <h1>ยินดีต้อนรับสู่ห้อง<span>ความทรงจำ</span> ND22</h1>
+  <p class="lede">ทุกคนมีพี่รหัสที่ซ่อนตัวอยู่เบื้องหลังคำใบ้เหล่านี้ กรอกรหัสนิสิตของน้องเพื่อปลดล็อกความทรงจำและเริ่มตามหาพี่รหัสของตัวเอง</p>
+
+  <div class="console">
+    <p class="console-label">ค้นหาด้วยรหัสนิสิต</p>
+    <form id="searchForm" autocomplete="off">
+      <input type="text" id="sidInput" inputmode="numeric" placeholder="เช่น 6932XXXXXX" maxlength="12">
+      <button type="submit">ค้นหา</button>
+    </form>
+    <p class="hint-note">ใช้ได้เฉพาะรหัสนิสิตของน้องรหัส ND22 (ขึ้นต้นด้วย 69) เท่านั้น</p>
+  </div>
+
+  <div id="result"></div>
+
+  <footer>ND22 · Memory Console — จากทุกสีสันอารมณ์ของ ND21</footer>
+</div>
+
+<script>
+  const DATA = {"6932012137": {"n": "ไออิ", "h": ["เจอได้ในคาบเรียนฟิสิกส์"]}, "6932010937": {"n": "เนส", "h": ["ลูก"]}, "6932038537": {"n": "ต้นกล้า", "h": ["กีฬา"]}, "6932037937": {"n": "ริมน้ำ", "h": ["แกทักก่อน"]}, "6932014437": {"n": "เซน", "h": ["🐱🐱🐱"]}, "6932020137": {"n": "แพรวา", "h": ["🐱🐱🐱"]}, "6932049437": {"n": "ฟาฟ", "h": ["เสียงดัง"]}, "6932017337": {"n": "เอม", "h": ["เสื้อขาว"]}, "6932045937": {"n": "แสตมป์", "h": ["เสื้อขาว"]}, "6932025337": {"n": "ผิงอัน", "h": ["17"]}, "6932047137": {"n": "อันปัน", "h": ["17"]}, "69320020937": {"n": "เผยซี", "h": ["คนมอมๆที่อยู่บ้านนอก"]}, "6932027637": {"n": "เพชร", "h": ["คนมอมๆที่อยู่บ้านนอก"]}, "6932033337": {"n": "ณิศา", "h": ["เจอพี่ได้ที่สนาม…"]}, "6932006437": {"n": "แคร์", "h": ["โพกาด้อท"]}, "6932016737": {"n": "ซี", "h": ["เลี้ยงแมว"]}, "6932040737": {"n": "เกรซ", "h": ["เขียว"]}, "6932036237": {"n": "เตย", "h": ["ขี้โกง"]}, "6932050037": {"n": "อิกคิว", "h": ["💚🩷💐✨"]}, "6932013837": {"n": "พิงกี้", "h": ["💚🩷💐✨"]}, "6932039137": {"n": "หนูดี", "h": ["7-11"]}, "6932015037": {"n": "น้ำมนต์", "h": ["7-11"]}, "6932009337": {"n": "อิงฟ้า", "h": ["งานคณะเจอเกือบทุกงาน"]}, "6932021837": {"n": "ฟาเซีย", "h": ["งานคณะเจอเกือบทุกงาน"]}, "6932026037": {"n": "บีม", "h": ["ชื่อแปลกๆ👉🏻👈🏻"]}, "6932044237": {"n": "เข็ม", "h": ["ชื่อแปลกๆ👉🏻👈🏻"]}, "6932034037": {"n": "มิว", "h": ["alphabet"]}, "6932005837": {"n": "ออเร้น", "h": ["หน้านิ่งแต่ฟังเพลงซิ่งอยู่"]}, "6932023037": {"n": "ปัดแก้ว", "h": ["😄🫶🏻"]}, "6932031037": {"n": "อิ่มเอม", "h": ["😄🫶🏻"]}, "6932001237": {"n": "ครีม", "h": ["อ้ายมา 4 คน"]}, "6932032737": {"n": "แพทตี้", "h": ["ชอบเล่นหมากรุก กับwuwa"]}, "6932046537": {"n": "มะหมี่", "h": ["ชอบเล่นหมากรุก กับwuwa"]}, "6932022437": {"n": "เบส", "h": ["แกงส้ม"]}, "6932043637": {"n": "กัสจัง", "h": ["ผมยาวสาวกึง"]}, "6932029937": {"n": "วาฬ", "h": ["ผมยาวสาวกึง"]}, "6932028237": {"n": "มิ้ม", "h": ["ห้ะ"]}, "6932008737": {"n": "ไอซ์", "h": ["ห้ะ"]}, "6932019637": {"n": "ว่าน", "h": ["มีปีก"]}, "6932048837": {"n": "อันดา", "h": ["เริ่ดๆเรยละ"]}, "6932018037": {"n": "แทน", "h": ["เริ่ดๆเรยละ"]}, "6932003537": {"n": "น้ำปาย", "h": ["ป่า"]}, "6932030437": {"n": "ซอล", "h": ["ป่า"]}, "6932011537": {"n": "บิลลี่", "h": ["แดง"]}, "6932004137": {"n": "บัวบัว", "h": ["แดง"]}};
+
+  // Ambient floating memory orbs
+  const orbField = document.getElementById('orbField');
+  const orbColors = ['var(--joy)','var(--sad)','var(--fear)','var(--anger)','var(--disgust)'];
+  const orbCount = window.innerWidth < 480 ? 10 : 18;
+  for(let i=0;i<orbCount;i++){
+    const o = document.createElement('div');
+    o.className = 'orb';
+    const size = 6 + Math.random()*16;
+    o.style.width = size+'px';
+    o.style.height = size+'px';
+    o.style.left = Math.random()*100+'%';
+    o.style.color = orbColors[i % orbColors.length];
+    o.style.background = 'currentColor';
+    const dur = 14 + Math.random()*18;
+    o.style.animation = `floatUp ${dur}s linear infinite`;
+    o.style.animationDelay = (-Math.random()*dur)+'s';
+    orbField.appendChild(o);
+  }
+
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('sidInput');
+  const result = document.getElementById('result');
+
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/[^0-9]/g,'');
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const sid = input.value.trim();
+    if(!sid){
+      flagError();
+      return;
+    }
+    const record = DATA[sid];
+    if(record){
+      renderFound(record);
+    } else {
+      renderNotFound();
+    }
+  });
+
+  function flagError(){
+    input.classList.remove('shake');
+    void input.offsetWidth;
+    input.classList.add('shake');
+    input.focus();
+  }
+
+  function renderFound(record){
+    const hints = record.h || [];
+    let hintsHtml;
+    if(hints.length === 0){
+      hintsHtml = `<div class="empty-note">พี่รหัสยังไม่ปล่อยคำใบ้ในตอนนี้ รอติดตามได้เลยนะ 👀</div>`;
+    } else {
+      hintsHtml = `<div class="hint-grid">` + hints.map((h,i)=>`
+        <div class="hint-card">
+          <div class="num">${i+1}</div>
+          <p>${escapeHtml(h)}</p>
+        </div>`).join('') + `</div>`;
+    }
+    result.innerHTML = `
+      <div class="result-card">
+        <div class="greet">
+          <div class="greet-orb"></div>
+          <div>
+            <h2>ยินดีต้อนรับ, น้อง${escapeHtml(record.n)} 👋</h2>
+            <p>นี่คือคำใบ้ที่พี่รหัสฝากไว้ให้น้อง</p>
+          </div>
+        </div>
+        ${hintsHtml}
+      </div>`;
+  }
+
+  function renderNotFound(){
+    result.innerHTML = `
+      <div class="not-found">
+        <div class="icon">!</div>
+        <div>
+          <strong>ไม่พบรหัสนิสิตนี้ในระบบ</strong>
+          <span>ลองตรวจสอบรหัสนิสิตอีกครั้ง (รูปแบบ 69XXXXXXXX)</span>
+        </div>
+      </div>`;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>
